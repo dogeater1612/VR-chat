@@ -1,0 +1,99 @@
+############################
+# OS / Editor
+############################
+.DS_Store
+Thumbs.db
+desktop.ini
+
+.vscode/
+!.vscode/extensions.json
+
+.idea/
+*.iml
+
+############################
+# Logs
+############################
+*.log
+logs/
+
+############################
+# Java / Maven / Spring Boot
+############################
+target/
+*.jar
+*.war
+*.ear
+*.class
+
+.mvn/wrapper/maven-wrapper.jar
+.mvn/wrapper/maven-wrapper.properties
+
+# Spring Boot
+application-local.yml
+application-dev.yml
+
+############################
+# Node / Angular
+############################
+node_modules/
+dist/
+out-tsc/
+.angular/
+.cache/
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+############################
+# Angular environment files
+############################
+environment.ts
+environment.development.ts
+environment.production.ts
+
+############################
+# MongoDB
+############################
+data/
+dump/
+
+############################
+# Docker
+############################
+*.env
+.env
+.env.*
+
+docker-compose.override.yml
+
+############################
+# Coverage / Tests
+############################
+coverage/
+reports/
+
+############################
+# Temporary files
+############################
+*.tmp
+*.temp
+*.swp
+*.swo
+
+############################
+# Certificates / Secrets
+############################
+*.key
+*.pem
+*.crt
+*.p12
+*.keystore
+
+############################
+# Misc
+############################
+*.bak
+*.old

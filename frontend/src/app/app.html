@@ -1,0 +1,25 @@
+<h2>Conversation {{ conversationId }}</h2>
+
+@if (loading) {
+  <p class="loading">Loading…</p>
+}
+
+@if (!loading && messages.length === 0) {
+  <p class="empty">Geen berichten</p>
+}
+
+@if (!loading && messages.length > 0) {
+  <div class="messages">
+    @for (msg of messages; track msg.id) {
+      <div
+        class="message"
+        [class.player]="msg.sender === 'PLAYER'"
+        [class.ai]="msg.sender === 'AI'"
+      >
+        <div class="sender">{{ msg.sender }}</div>
+        <div class="text">{{ msg.text }}</div>
+        <div class="time">{{ msg.timestamp }}</div>
+      </div>
+    }
+  </div>
+}
