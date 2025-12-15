@@ -1,13 +1,20 @@
 <h2>Conversation {{ conversationId }}</h2>
 
 @if (loading) {
-  <p>Loading…</p>
+  <p class="loading">Loading…</p>
 }
 
-@for (msg of messages; track $index) {
-  <div>
-    <b>{{ msg.sender }}</b>: {{ msg.text }}
-    <br />
-    <small>{{ msg.timestamp }}</small>
+@if (!loading && messages.length === 0) {
+  <p class="empty">Geen berichten</p>
+}
+
+@if (!loading && messages.length > 0) {
+  <div class="messages">
+    @for (msg of messages; track msg.id) {
+      <div class="message">
+        <b>{{ msg.sender }}</b>: {{ msg.text }}
+        <div class="time">{{ msg.timestamp }}</div>
+      </div>
+    }
   </div>
 }

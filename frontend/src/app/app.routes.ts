@@ -1,9 +1,8 @@
 import { Routes } from '@angular/router';
-import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard';
 import { ChatComponent } from './chat.component';
+import { TeacherDashboardComponent } from './teacher-dashboard/teacher-dashboard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'teacher', pathMatch: 'full' },
-  { path: 'teacher', component: TeacherDashboardComponent },
+  { path: '', component: TeacherDashboardComponent },
   { path: 'chat/:id', component: ChatComponent },
 ];

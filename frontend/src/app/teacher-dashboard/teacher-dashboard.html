@@ -6,13 +6,13 @@
       <button
         class="conversation-btn"
         [class.active]="id === selected"
-        (click)="selected = id">
+        (click)="goTo(id)">
         {{ id }}
       </button>
     }
   </aside>
 
   <main class="content">
-    <chat-view [conversationId]="selected"></chat-view>
+    <router-outlet></router-outlet>
   </main>
 </div>

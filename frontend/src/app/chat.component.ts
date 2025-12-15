@@ -1,9 +1,7 @@
-import { Component, Input, OnChanges, OnDestroy, SimpleChanges } from '@angular/core';
+import { Component, Input, OnInit, OnDestroy } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { Api, ChatMessage } from './api';
 import { WsService } from './ws.service';
-import { Api } from './api';
-import { ChatMessage } from './api';
-
 import { Subscription } from 'rxjs';
 
 @Component({
@@ -12,51 +10,74 @@ import { Subscription } from 'rxjs';
   imports: [CommonModule],
   templateUrl: './chat.component.html',
 })
-export class ChatComponent implements OnChanges, OnDestroy {
+export class ChatComponent implements OnInit, OnDestroy {
 
   @Input() conversationId!: string;
 
   messages: ChatMessage[] = [];
   loading = true;
 
-  private sub?: Subscription;
+  private wsSub?: Subscription;
 
   constructor(
-    private ws: WsService,
-    private api: Api
+    private api: Api,
+    private ws: WsService
   ) {}
 
-  ngOnChanges(changes: SimpleChanges): void {
-    if (changes['conversationId']) {
-      this.loadInitial();
-      this.connectWs();
-    }
-  }
+  // ChatComponent.ts
 
-  loadInitial() {
-    this.loading = true;
+// ChatComponent.ts
 
-    this.api.getConversation(this.conversationId)
-      .subscribe((msgs: ChatMessage[]) => {
+  ngOnInit() {
+    // 1. Log ID voor debug (optioneel, maar goed om te weten)
+    console.log('[ChatComponent] Conversation ID:', this.conversationId);
+
+    // 2. Controleer of we een ID hebben om mee te werken
+    if (this.conversationId) { // Alleen doorgaan als ID aanwezig is
+        
+        // --- LAAD BESTAANDE BERICHTEN (API CALL) ---
+        this.api.getConversation(this.conversationId).subscribe({
+          next: msgs => {
+            this.messages = msgs;
+            this.loading = false;
+          },
+          error: (err) => {
+                console.error('Fout bij laden conversatie via API:', err);
+              this.loading = false;
+          }
+        });
+
+        // --- STEL WEBSOCKET VERBINDING IN ---
+        this.ws.connect(this.conversationId);
+        this.wsSub = this.ws.messages().subscribe(msg => {
+          this.messages = [...this.messages, msg];
+        });
+        
+    } else {
+        // Als de ID ontbreekt, stel loading in op false zodat "Geen berichten" verschijnt.
+        this.loading = false;
+        console.warn('[ChatComponent] conversationId ontbreekt. Kan niet communiceren.');
+    }
+ 
+
+    this.api.getConversation(this.conversationId).subscribe({
+      next: msgs => {
         this.messages = msgs;
         this.loading = false;
-      });
-  }
-
-  connectWs() {
-    this.ws.disconnect();
-    this.ws.connect(this.conversationId);
-
-    this.sub?.unsubscribe();
-    this.sub = this.ws.messages().subscribe(msg => {
-      if (msg) {
-        this.messages = [...this.messages, msg];
+      },
+      error: () => {
+        this.loading = false;
       }
+    });
+
+    this.ws.connect(this.conversationId);
+    this.wsSub = this.ws.messages().subscribe(msg => {
+      this.messages = [...this.messages, msg];
     });
   }
 
-  ngOnDestroy(): void {
+  ngOnDestroy() {
+    this.wsSub?.unsubscribe();
     this.ws.disconnect();
-    this.sub?.unsubscribe();
   }
 }
